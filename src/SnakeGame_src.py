@@ -1,9 +1,19 @@
-"""
-Snake Eater
-Made with PyGame
-"""
 
 import pygame, sys, time, random
+import os
+
+# --- Sound Effect Setup ---
+sound_path = os.path.join(os.path.dirname(__file__), 'bite.wav')
+if not os.path.isfile(sound_path):
+    eat_sound = None
+    print(f"[!] Required sound file 'bite.wav' not found at {sound_path}. Sound effects will be disabled.")
+else:
+    try:
+        pygame.mixer.init()
+        eat_sound = pygame.mixer.Sound(sound_path)
+    except Exception as e:
+        eat_sound = None
+        print(f"[!] Could not load sound: {e}")
 
 
 
@@ -190,6 +200,8 @@ while True:
     if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
         score += 1
         food_spawn = False
+        if eat_sound:
+            eat_sound.play()
     else:
         snake_body.pop()
 
@@ -225,3 +237,4 @@ while True:
     pygame.display.update()
     # Refresh rate
     fps_controller.tick(difficulty)
+
