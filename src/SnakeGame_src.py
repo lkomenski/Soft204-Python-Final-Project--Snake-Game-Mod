@@ -32,7 +32,20 @@ else:
         eat_sound = pygame.mixer.Sound(sound_path)
     except Exception as e:
         eat_sound = None
+# --- Sound Effect Setup ---
+sound_path = os.path.join(os.path.dirname(__file__), 'bite.wav')
+if not os.path.isfile(sound_path):
+    eat_sound = None
+    print(f"[!] Required sound file 'bite.wav' not found at {sound_path}. Sound effects will be disabled.")
+else:
+    try:
+        pygame.mixer.init()
+        eat_sound = pygame.mixer.Sound(sound_path)
+    except Exception as e:
+        eat_sound = None
         print(f"[!] Could not load sound: {e}")
+
+
 
 
 
