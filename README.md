@@ -10,4 +10,4 @@ Workflow outline can be found [here.](https://github.com/lkomenski/Soft204-Pytho
 
 # Attribution
 Rajat Dipta Biswas is the creator of the original source code.
-[Original code found here](https://github.com/rajatdiptabiswas/snake-pygame/blob/master/Snake%20Game.py)
+[Original code](https://github.com/rajatdiptabiswas/snake-pygame/blob/master/Snake%20Game.py)
