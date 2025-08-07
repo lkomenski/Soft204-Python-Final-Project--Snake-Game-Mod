@@ -7,7 +7,7 @@ Here is the [Workflow.](https://github.com/lkomenski/Soft204-Python-Final-Projec
 
 ###  Purpose of Automated Tests
 
-Automated tests are designed to verify the core gameplay logic — such as collision detection, score updates, and game-over conditions. These tests serve two key purposes:
+Automated tests are designed to verify the core gameplay logic — such as collision detection, score updates, and direction changes. These tests serve two key purposes:
 
 1. **Validate Essential Game Mechanics**  
    We pre-identified critical functions that define how the game operates. By writing tests for these components, we ensure they behave as expected under various conditions.
