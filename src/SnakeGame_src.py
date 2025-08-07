@@ -60,18 +60,31 @@ score = 0
 
 
 # Game Over
-def game_over():
-    my_font = pygame.font.SysFont('times new roman', 90)
-    game_over_surface = my_font.render('YOU DIED', True, red)
-    game_over_rect = game_over_surface.get_rect()
-    game_over_rect.midtop = (frame_size_x/2, frame_size_y/4)
-    game_window.fill(black)
-    game_window.blit(game_over_surface, game_over_rect)
-    show_score(0, red, 'times', 20)
+def game_over(screen, score):
+    font = pygame.font.SysFont('arial', 48)
+    small_font = pygame.font.SysFont('arial', 32)
+    game_over_text = font.render('Game Over', True, (255, 0, 0))
+    score_text = small_font.render(f'Score: {score}', True, (255, 255, 255))
+    replay_text = small_font.render('Press R to Replay or ESC to Quit', True, (255, 255, 0))
+
+    screen.fill((0, 0, 0))
+    screen.blit(game_over_text, (screen.get_width() // 2 - game_over_text.get_width() // 2, 100))
+    screen.blit(score_text, (screen.get_width() // 2 - score_text.get_width() // 2, 200))
+    screen.blit(replay_text, (screen.get_width() // 2 - replay_text.get_width() // 2, 300))
     pygame.display.flip()
-    time.sleep(3)
-    pygame.quit()
-    sys.exit()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    return True   # Replay
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+        pygame.time.wait(100)
 
 
 # Score
