@@ -24,6 +24,16 @@ else:
         print(f"[!] Could not load sound: {e}")
 
 
+
+
+
+
+
+
+
+
+
+
 # Difficulty settings
 # Easy      ->  10
 # Medium    ->  25
