@@ -6,13 +6,7 @@ Made with PyGame
 import pygame, sys, time, random
 
 
-# Difficulty settings
-# Easy      ->  10
-# Medium    ->  25
-# Hard      ->  40
-# Harder    ->  60
-# Impossible->  120
-difficulty = 10
+
 
 # Window size
 frame_size_x = 720
@@ -28,11 +22,9 @@ if check_errors[1] > 0:
 else:
     print('[+] Game successfully initialised')
 
-
 # Initialise game window
 pygame.display.set_caption('Snake Eater')
 game_window = pygame.display.set_mode((frame_size_x, frame_size_y))
-
 
 # Colors (R, G, B)
 black = pygame.Color(0, 0, 0)
@@ -41,9 +33,74 @@ red = pygame.Color(255, 0, 0)
 green = pygame.Color(0, 255, 0)
 blue = pygame.Color(0, 0, 255)
 
-
 # FPS (frames per second) controller
 fps_controller = pygame.time.Clock()
+
+# --- Splash screen and difficulty selection in window ---
+def splash_screen_and_select_difficulty():
+    title_font = pygame.font.SysFont('times new roman', 60)
+    info_font = pygame.font.SysFont('consolas', 28)
+    small_font = pygame.font.SysFont('consolas', 22)
+    difficulties = [
+        ("Easy", 10),
+        ("Medium", 25),
+        ("Hard", 40),
+        ("Harder", 60),
+        ("Impossible", 120)
+    ]
+    selected = 0
+    while True:
+        game_window.fill(black)
+        # Title
+        title_surface = title_font.render('SNAKE EATER', True, green)
+        title_rect = title_surface.get_rect(center=(frame_size_x/2, frame_size_y/6))
+        game_window.blit(title_surface, title_rect)
+
+        # Instructions
+        info_surface = info_font.render('Select Difficulty:', True, white)
+        info_rect = info_surface.get_rect(center=(frame_size_x/2, frame_size_y/3))
+        game_window.blit(info_surface, info_rect)
+
+        # Difficulty options
+        for i, (label, _) in enumerate(difficulties):
+            color = blue if i == selected else white
+            diff_surface = small_font.render(f"{i+1} - {label}", True, color)
+            diff_rect = diff_surface.get_rect(center=(frame_size_x/2, frame_size_y/2 + i*35))
+            game_window.blit(diff_surface, diff_rect)
+
+        # Start button
+        start_surface = small_font.render('Press ENTER to Start', True, green)
+        start_rect = start_surface.get_rect(center=(frame_size_x/2, frame_size_y - 60))
+        game_window.blit(start_surface, start_rect)
+
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    selected = (selected - 1) % len(difficulties)
+                elif event.key == pygame.K_DOWN:
+                    selected = (selected + 1) % len(difficulties)
+                elif event.key in [pygame.K_1, pygame.K_KP1]:
+                    selected = 0
+                elif event.key in [pygame.K_2, pygame.K_KP2]:
+                    selected = 1
+                elif event.key in [pygame.K_3, pygame.K_KP3]:
+                    selected = 2
+                elif event.key in [pygame.K_4, pygame.K_KP4]:
+                    selected = 3
+                elif event.key in [pygame.K_5, pygame.K_KP5]:
+                    selected = 4
+                elif event.key == pygame.K_RETURN:
+                    return difficulties[selected][1]
+
+# Show splash and get difficulty before starting the game
+difficulty = splash_screen_and_select_difficulty()
+
+
 
 
 # Game variables
@@ -87,7 +144,7 @@ def show_score(choice, color, font, size):
     # pygame.display.flip()
 
 
-# Main logic
+ # Main logic
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
