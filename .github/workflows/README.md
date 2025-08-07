@@ -1,9 +1,9 @@
 
 ## Automated Testing and GitHub Workflows
 
-To ensure the stability and reliability of our Python game project, we implemented automated testing and GitHub workflows as part of our development process.
-[Test file](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/blob/main/.github/workflows/test_basics.py)
-[Workflow](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/blob/main/.github/workflows/python-app.yml)
+To ensure the stability and reliability of our Python game project, we implemented automated testing and GitHub workflows as part of our development process.  
+Here is the [Test file.](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/blob/main/.github/workflows/test_basics.py)  
+Here is the [Workflow.](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/blob/main/.github/workflows/python-app.yml)  
 
 ###  Purpose of Automated Tests
 
