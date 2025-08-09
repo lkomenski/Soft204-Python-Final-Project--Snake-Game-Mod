@@ -109,6 +109,7 @@ def restart_game():
     direction = 'RIGHT'
     change_to = direction
     score = 0
+    
 # Score
 def show_score(choice, color, font, size):
     score_font = pygame.font.SysFont(font, size)
