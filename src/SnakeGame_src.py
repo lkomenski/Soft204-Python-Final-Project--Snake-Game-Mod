@@ -1,4 +1,3 @@
-
 import pygame, sys, time, random
 import os
 
@@ -67,10 +66,13 @@ direction = 'RIGHT'
 change_to = direction
 
 score = 0
-
+high_score = 0  # Track high score for the session
 
 # Game Over
 def game_over():
+    global score, high_score
+    if score > high_score:
+        high_score = score  # Update high score if needed
     my_font = pygame.font.SysFont('times new roman', 90)
     button_font = pygame.font.SysFont('times new roman', 40)
     game_over_surface = my_font.render('BETTER LUCK NEXT TIME', True, red)
@@ -95,11 +97,12 @@ def game_over():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if replay_rect.inflate(40, 20).collidepoint(event.pos):
                     restart_game()
-                    return
+                    return 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
+                    
 def restart_game():
     global snake_pos, snake_body, food_pos, food_spawn, direction, change_to, score
     snake_pos = [100, 50]
@@ -113,14 +116,14 @@ def restart_game():
 # Score
 def show_score(choice, color, font, size):
     score_font = pygame.font.SysFont(font, size)
-    score_surface = score_font.render('Score : ' + str(score), True, color)
+    score_text = f"Score : {score}  |  High Score : {high_score}"  # Partition with vertical bar
+    score_surface = score_font.render(score_text, True, color)
     score_rect = score_surface.get_rect()
     if choice == 1:
-        score_rect.midtop = (frame_size_x/10, 15)
+        score_rect.midtop = (frame_size_x // 2, 15)  # Centered at top
     else:
-        score_rect.midtop = (frame_size_x/2, frame_size_y/1.25)
+        score_rect.midtop = (frame_size_x // 2, frame_size_y / 1.25)
     game_window.blit(score_surface, score_rect)
-    # pygame.display.flip()
 
 
 # Main logic
@@ -206,4 +209,3 @@ while True:
     pygame.display.update()
     # Refresh rate
     fps_controller.tick(difficulty)
-
