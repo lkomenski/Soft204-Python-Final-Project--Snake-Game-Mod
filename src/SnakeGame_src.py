@@ -72,18 +72,44 @@ score = 0
 # Game Over
 def game_over():
     my_font = pygame.font.SysFont('times new roman', 90)
-    game_over_surface = my_font.render('YOU DIED', True, red)
+    button_font = pygame.font.SysFont('times new roman', 40)
+    game_over_surface = my_font.render('BETTER LUCK NEXT TIME', True, red)
     game_over_rect = game_over_surface.get_rect()
     game_over_rect.midtop = (frame_size_x/2, frame_size_y/4)
-    game_window.fill(black)
-    game_window.blit(game_over_surface, game_over_rect)
-    show_score(0, red, 'times', 20)
-    pygame.display.flip()
-    time.sleep(3)
-    pygame.quit()
-    sys.exit()
+    replay_surface = button_font.render('Replay', True, black)
+    replay_rect = replay_surface.get_rect()
+    replay_rect.center = (frame_size_x/2, frame_size_y/2)
+    button_color = green
 
-
+    while True:
+        game_window.fill(black)
+        game_window.blit(game_over_surface, game_over_rect)
+        show_score(0, red, 'times', 20)
+        pygame.draw.rect(game_window, button_color, replay_rect.inflate(40, 20))
+        game_window.blit(replay_surface, replay_rect)
+        pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if replay_rect.inflate(40, 20).collidepoint(event.pos):
+                    restart_game()
+                    return
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+def restart_game():
+    global snake_pos, snake_body, food_pos, food_spawn, direction, change_to, score
+    snake_pos = [100, 50]
+    snake_body = [[100, 50], [100-10, 50], [100-(2*10), 50]]
+    food_pos = [random.randrange(1, (frame_size_x//10)) * 10, random.randrange(1, (frame_size_y//10)) * 10]
+    food_spawn = True
+    direction = 'RIGHT'
+    change_to = direction
+    score = 0
+    
 # Score
 def show_score(choice, color, font, size):
     score_font = pygame.font.SysFont(font, size)
