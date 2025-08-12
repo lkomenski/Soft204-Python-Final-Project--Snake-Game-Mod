@@ -4,6 +4,8 @@ import os
 
 
 # --- Cross-platform Sound Effect Setup ---
+# This section checks if the sound file exists, what platform is being used, and selects the 
+# correct driver. If it is entirely unsupported, no sound will play and no error messages will appear
 import platform
 try:
     from playsound import playsound
