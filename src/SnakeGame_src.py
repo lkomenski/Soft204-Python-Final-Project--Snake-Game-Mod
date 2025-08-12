@@ -2,18 +2,54 @@
 import pygame, sys, time, random
 import os
 
-# --- Sound Effect Setup ---
-sound_path = os.path.join(os.path.dirname(__file__), 'bite.wav')
-if not os.path.isfile(sound_path):
-    eat_sound = None
-    print(f"[!] Required sound file 'bite.wav' not found at {sound_path}. Sound effects will be disabled.")
-else:
-    try:
-        pygame.mixer.init()
-        eat_sound = pygame.mixer.Sound(sound_path)
-    except Exception as e:
-        eat_sound = None
-        print(f"[!] Could not load sound: {e}")
+
+# --- Cross-platform Sound Effect Setup ---
+import platform
+try:
+    from playsound import playsound
+except ImportError:
+    playsound = None
+
+class _Sound:
+    def __init__(self, path):
+        self.path = path
+        self._sound = None
+        self._mode = None
+        self._init_sound()
+    def _init_sound(self):
+        if not os.path.isfile(self.path):
+            print(f"[!] Required sound file 'bite.wav' not found at {self.path}. Sound effects will be disabled.")
+            self._mode = 'none'
+            return
+        plat = platform.system().lower()
+        is_ios = (
+            plat == 'darwin' and hasattr(sys, 'get_ios_version') or
+            'ios' in plat or 'iphone' in plat or 'ipad' in plat
+        )
+        if is_ios and playsound:
+            self._mode = 'playsound'
+        else:
+            try:
+                pygame.mixer.init()
+                self._sound = pygame.mixer.Sound(self.path)
+                self._mode = 'pygame'
+            except Exception as e:
+                if playsound:
+                    print(f"[!] Could not load sound with pygame.mixer: {e}. Using playsound fallback.")
+                    self._mode = 'playsound'
+                else:
+                    print(f"[!] Could not load sound: {e}. Using dummy sound.")
+                    self._mode = 'none'
+    def play(self):
+        if self._mode == 'pygame' and self._sound:
+            self._sound.play()
+        elif self._mode == 'playsound' and playsound:
+            try:
+                playsound(self.path, block=False)
+            except Exception as e:
+                print(f"[!] Could not play sound with playsound: {e}")
+
+eat_sound = _Sound(os.path.join(os.path.dirname(__file__), 'bite.wav'))
 
 
 
@@ -84,7 +120,7 @@ def splash_screen_and_select_difficulty():
         game_window.blit(start_surface, start_rect)
 
         pygame.display.flip()
-
+        # Keystrokes for menu selection
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
