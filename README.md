@@ -1,5 +1,5 @@
 ## Soft204: Python Final Project: Snake Game Mod
-Final group project for SOFT204 class at Bates Technical College. We have modified an existing open-source Snake PyGame, including two visual and two gameplay changes.
+Final group project for SOFT204 class at Bates Technical College. We have modified an existing open-source Snake PyGame, including visual and gameplay changes, as well as refactoring.
 
 ## Contributors
 Game modified with collaborators Leena Komenski, Andrew Riley, and Olena Volkova.
