@@ -6,6 +6,11 @@ import pygame, sys, time, random
 import os # For file path handling, for sound effects
 
 # --- Sound Effect Setup ---
+"""
+Initializes sound effects for eating food.
+Attempts to load 'bite.wav' from the script directory.
+If the sound files are missing or cannot be loaded, disables sound effects without errors.
+"""
 # This section adds and sets up sound effects for the game. 
 sound_path = os.path.join(os.path.dirname(__file__), 'bite.wav')
 if not os.path.isfile(sound_path):
@@ -28,6 +33,11 @@ frame_size_x = 1280
 frame_size_y = 720
 
 # --- Check for Errors Encountered ---
+"""
+Check for errors encountered during pygame initialization.
+If any errors are found, print the error count and exit the program.
+Otherwise, print a success message.
+"""
 check_errors = pygame.init()
 # pygame.init() example output -> (6, 0)
 # second number in tuple gives number of errors
@@ -56,6 +66,13 @@ fps_controller = pygame.time.Clock()
 # select the game difficulty by navigating through the options with the arrow keys 
 # and pressing ENTER to confirm. Previously, this was hardcoded into the game logic.
 def splash_screen_and_select_difficulty():
+    """
+    Display the splash screen and allow the user to select a difficulty level.
+    Shows the game title, instructions, and difficulty options.
+    User can navigate options with arrow keys or number keys, and start the game with ENTER.
+    Returns:
+        int: The selected difficulty value (game speed).
+    """
     title_font = pygame.font.SysFont('times new roman', 60)
     info_font = pygame.font.SysFont('consolas', 28)
     small_font = pygame.font.SysFont('consolas', 22)
@@ -138,6 +155,11 @@ score = 0
 # --- Game Over ---
 # This module was modified to include a replay button, and modified end screen text
 def game_over():
+    """
+    Display the end game screen and handle replay or exit.
+    Shows the 'BETTER LUCK NEXT TIME' message and a replay button.
+    Waits for user input to either replay the game or exit.
+    """
     my_font = pygame.font.SysFont('times new roman', 90)
     button_font = pygame.font.SysFont('times new roman', 40)
     game_over_surface = my_font.render('BETTER LUCK NEXT TIME', True, red)
@@ -180,6 +202,14 @@ def restart_game():
     
 # --- Score ---
 def show_score(choice, color, font, size):
+    """
+    Display the current score on the game window.
+    Args:
+        choice (int): 1 to show score at the top left, 0 to show at the center bottom.
+        color (pygame.Color): Color of the score text.
+        font (str): Font name for the score text.
+        size (int): Font size for the score text.
+    """
     score_font = pygame.font.SysFont(font, size)
     score_surface = score_font.render('Score : ' + str(score), True, color)
     score_rect = score_surface.get_rect()
