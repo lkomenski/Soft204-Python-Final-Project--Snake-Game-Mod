@@ -15,6 +15,7 @@ Game modified with collaborators Leena Komenski, Andrew Riley, and Olena Volkova
 7. End screen title changed
 
 ## Workflow  
+A workflow was added to this repository to ensure pull requests do not break key game mechanics.
 Workflow outline can be found [here.](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/blob/main/.github/WORKFLOW_README.md)
 
 # Attribution
