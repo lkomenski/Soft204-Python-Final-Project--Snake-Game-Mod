@@ -5,6 +5,15 @@ Final group project for SOFT204 class at Bates Technical College. We have modifi
 Game modified with collaborators Leena Komenski, Andrew Riley, and Olena Volkova.
 [Contributions found here](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/graphs/contributors)
 
+## Changes Made to Original Script
+1. The window size was enlarged from 480x720 to 1280x720
+2. Sound effects when the snake eats food and crashes into the wall
+3. An interactive splash screen that allows the user to select a difficulty level and start the game
+4. Increased cross-platform sound effect functionality
+5. Session high score stored and displayed
+6. Replay button added at end screen
+7. End screen title changed
+
 ## Workflow  
 Workflow outline can be found [here.](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/blob/main/.github/WORKFLOW_README.md)
 
