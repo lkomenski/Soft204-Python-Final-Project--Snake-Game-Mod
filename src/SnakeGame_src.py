@@ -1,8 +1,12 @@
+# SOFT204 Final Project - Snake Eater
+# Code edited and modified by Leena Komenski, Andrew Riley, and Olena Volkova
+
 
 import pygame, sys, time, random
-import os
+import os # For file path handling, for sound effects
 
 # --- Sound Effect Setup ---
+# This section adds and sets up sound effects for the game. 
 sound_path = os.path.join(os.path.dirname(__file__), 'bite.wav')
 if not os.path.isfile(sound_path):
     eat_sound = None
@@ -18,11 +22,12 @@ else:
 
 
 
-# Window size
+# --- Window Size ---
+# Window size was enlarged from 480x720
 frame_size_x = 1280
 frame_size_y = 720
 
-# Checks for errors encountered
+# --- Check for Errors Encountered ---
 check_errors = pygame.init()
 # pygame.init() example output -> (6, 0)
 # second number in tuple gives number of errors
@@ -32,21 +37,24 @@ if check_errors[1] > 0:
 else:
     print('[+] Game successfully initialised')
 
-# Initialise game window
+# --- Initialise Game Window ---
 pygame.display.set_caption('Snake Eater')
 game_window = pygame.display.set_mode((frame_size_x, frame_size_y))
 
-# Colors (R, G, B)
+# --- Colors (R, G, B) ---
 black = pygame.Color(0, 0, 0)
 white = pygame.Color(255, 255, 255)
 red = pygame.Color(255, 0, 0)
 green = pygame.Color(0, 255, 0)
 blue = pygame.Color(0, 0, 255)
 
-# FPS (frames per second) controller
+# --- FPS (frames per second) Controller ---
 fps_controller = pygame.time.Clock()
 
-# --- Splash screen and difficulty selection in window ---
+# --- Splash Screen and Difficulty Selection in Window ---
+# This section was added and displays the splash screen and allows the player to 
+# select the game difficulty by navigating through the options with the arrow keys 
+# and pressing ENTER to confirm. Previously, this was hardcoded into the game logic.
 def splash_screen_and_select_difficulty():
     title_font = pygame.font.SysFont('times new roman', 60)
     info_font = pygame.font.SysFont('consolas', 28)
@@ -84,7 +92,8 @@ def splash_screen_and_select_difficulty():
         game_window.blit(start_surface, start_rect)
 
         pygame.display.flip()
-
+       
+        # Key selection
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -113,7 +122,7 @@ difficulty = splash_screen_and_select_difficulty()
 
 
 
-# Game variables
+# --- Game Variables ---
 snake_pos = [100, 50]
 snake_body = [[100, 50], [100-10, 50], [100-(2*10), 50]]
 
@@ -126,7 +135,8 @@ change_to = direction
 score = 0
 
 
-# Game Over
+# --- Game Over ---
+# This module was modified to include a replay button, and modified end screen text
 def game_over():
     my_font = pygame.font.SysFont('times new roman', 90)
     button_font = pygame.font.SysFont('times new roman', 40)
@@ -138,6 +148,7 @@ def game_over():
     replay_rect.center = (frame_size_x/2, frame_size_y/2)
     button_color = green
 
+    # Added loop with replay button 
     while True:
         game_window.fill(black)
         game_window.blit(game_over_surface, game_over_rect)
@@ -167,7 +178,7 @@ def restart_game():
     change_to = direction
     score = 0
     
-# Score
+# --- Score ---
 def show_score(choice, color, font, size):
     score_font = pygame.font.SysFont(font, size)
     score_surface = score_font.render('Score : ' + str(score), True, color)
@@ -180,8 +191,14 @@ def show_score(choice, color, font, size):
     # pygame.display.flip()
 
 
- # Main logic
-while True:
+
+# --- Main Game Logic ---
+# This section was completely refactored to modularize each key game component.
+# This makes the code more organized and easier to manage and edit.
+def handle_events():
+    """Handle user input and quit events."""
+    global change_to
+    # Handle all events in the queue
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -201,6 +218,9 @@ while True:
             if event.key == pygame.K_ESCAPE:
                 pygame.event.post(pygame.event.Event(pygame.QUIT))
 
+def update_direction():
+    """Update the snake's direction, preventing reversal."""
+    global direction
     # Making sure the snake cannot move in the opposite direction instantaneously
     if change_to == 'UP' and direction != 'DOWN':
         direction = 'UP'
@@ -211,7 +231,9 @@ while True:
     if change_to == 'RIGHT' and direction != 'LEFT':
         direction = 'RIGHT'
 
-    # Moving the snake
+def move_snake():
+    """Move the snake in the current direction."""
+    # Move the snake in the current direction
     if direction == 'UP':
         snake_pos[1] -= 10
     if direction == 'DOWN':
@@ -221,33 +243,42 @@ while True:
     if direction == 'RIGHT':
         snake_pos[0] += 10
 
-    # Snake body growing mechanism
+def grow_snake_and_check_food():
+    """Grow the snake if food is eaten, play sound, and spawn new food if needed."""
+    global score, food_spawn, food_pos
+    # --- Snake Body Growing Mechanism ---
     snake_body.insert(0, list(snake_pos))
     if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
         score += 1
         food_spawn = False
+        # Added sound effect (if available)
         if eat_sound:
             eat_sound.play()
     else:
         snake_body.pop()
-
-    # Spawning food on the screen
+    # --- Spawning Food on the Screen ---
     if not food_spawn:
         food_pos = [random.randrange(1, (frame_size_x//10)) * 10, random.randrange(1, (frame_size_y//10)) * 10]
     food_spawn = True
 
-    # GFX
+def draw_elements():
+    """Draw the snake, food, and update the display."""
+    # --- GFX ---
     game_window.fill(black)
     for pos in snake_body:
         # Snake body
         # .draw.rect(play_surface, color, xy-coordinate)
         # xy-coordinate -> .Rect(x, y, size_x, size_y)
         pygame.draw.rect(game_window, green, pygame.Rect(pos[0], pos[1], 10, 10))
-
-    # Snake food
+    # --- Snake Food ---
     pygame.draw.rect(game_window, white, pygame.Rect(food_pos[0], food_pos[1], 10, 10))
+    show_score(1, white, 'consolas', 20)
+    # Refresh game screen
+    pygame.display.update()
 
-    # Game Over conditions
+def check_game_over():
+    """Check for collisions with walls or self."""
+    # --- Game Over Conditions ---
     # Getting out of bounds
     if snake_pos[0] < 0 or snake_pos[0] > frame_size_x-10:
         game_over()
@@ -258,9 +289,17 @@ while True:
         if snake_pos[0] == block[0] and snake_pos[1] == block[1]:
             game_over()
 
-    show_score(1, white, 'consolas', 20)
-    # Refresh game screen
-    pygame.display.update()
-    # Refresh rate
-    fps_controller.tick(difficulty)
+def main_game_loop():
+    """Main game loop, calling helper functions each frame."""
+    while True:
+        handle_events()         # Handle user input
+        update_direction()      # Update direction
+        move_snake()           # Move the snake
+        grow_snake_and_check_food() # Grow snake and check for food
+        check_game_over()      # Check for collisions
+        draw_elements()        # Draw everything
+        fps_controller.tick(difficulty) # Refresh rate / Control game speed
+
+# Start the refactored main game loop
+main_game_loop()
 
