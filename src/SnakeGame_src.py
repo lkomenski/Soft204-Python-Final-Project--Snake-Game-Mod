@@ -84,54 +84,55 @@ def splash_screen_and_select_difficulty():
         ("Impossible", 120)
     ]
     selected = 0
-    while True:
+
+    def render_screen(selected):
         game_window.fill(black)
-        # Title
         title_surface = title_font.render('SNAKE EATER', True, green)
         title_rect = title_surface.get_rect(center=(frame_size_x/2, frame_size_y/6))
         game_window.blit(title_surface, title_rect)
-
-        # Instructions
         info_surface = info_font.render('Select Difficulty:', True, white)
         info_rect = info_surface.get_rect(center=(frame_size_x/2, frame_size_y/3))
         game_window.blit(info_surface, info_rect)
-
-        # Difficulty options
         for i, (label, _) in enumerate(difficulties):
             color = blue if i == selected else white
             diff_surface = small_font.render(f"{i+1} - {label}", True, color)
             diff_rect = diff_surface.get_rect(center=(frame_size_x/2, frame_size_y/2 + i*35))
             game_window.blit(diff_surface, diff_rect)
-
-        # Start button
         start_surface = small_font.render('Press ENTER to Start', True, green)
         start_rect = start_surface.get_rect(center=(frame_size_x/2, frame_size_y - 60))
         game_window.blit(start_surface, start_rect)
-
         pygame.display.flip()
-       
-        # Key selection
+
+    def handle_event(event, selected):
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type != pygame.KEYDOWN:
+            return selected, False
+        if event.key == pygame.K_UP:
+            return (selected - 1) % len(difficulties), False
+        if event.key == pygame.K_DOWN:
+            return (selected + 1) % len(difficulties), False
+        if event.key == pygame.K_RETURN:
+            return selected, True
+        number_keys = [
+            (pygame.K_1, pygame.K_KP1),
+            (pygame.K_2, pygame.K_KP2),
+            (pygame.K_3, pygame.K_KP3),
+            (pygame.K_4, pygame.K_KP4),
+            (pygame.K_5, pygame.K_KP5),
+        ]
+        for idx, keys in enumerate(number_keys):
+            if idx < len(difficulties) and event.key in keys:
+                return idx, False
+        return selected, False
+
+    while True:
+        render_screen(selected)
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    selected = (selected - 1) % len(difficulties)
-                elif event.key == pygame.K_DOWN:
-                    selected = (selected + 1) % len(difficulties)
-                elif event.key in [pygame.K_1, pygame.K_KP1]:
-                    selected = 0
-                elif event.key in [pygame.K_2, pygame.K_KP2]:
-                    selected = 1
-                elif event.key in [pygame.K_3, pygame.K_KP3]:
-                    selected = 2
-                elif event.key in [pygame.K_4, pygame.K_KP4]:
-                    selected = 3
-                elif event.key in [pygame.K_5, pygame.K_KP5]:
-                    selected = 4
-                elif event.key == pygame.K_RETURN:
-                    return difficulties[selected][1]
+            selected, start = handle_event(event, selected)
+            if start:
+                return difficulties[selected][1]
 
 # Show splash and get difficulty before starting the game
 difficulty = splash_screen_and_select_difficulty()
@@ -229,22 +230,27 @@ def handle_events():
     """Handle user input and quit events."""
     global change_to
     # Handle all events in the queue
+    def set_direction_from_key(key):
+        global change_to
+        key_map = {
+            pygame.K_UP: 'UP',
+            ord('w'): 'UP',
+            pygame.K_DOWN: 'DOWN',
+            ord('s'): 'DOWN',
+            pygame.K_LEFT: 'LEFT',
+            ord('a'): 'LEFT',
+            pygame.K_RIGHT: 'RIGHT',
+            ord('d'): 'RIGHT'
+        }
+        if key in key_map:
+            change_to = key_map[key]
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        # Whenever a key is pressed down
         elif event.type == pygame.KEYDOWN:
-            # W -> Up; S -> Down; A -> Left; D -> Right
-            if event.key == pygame.K_UP or event.key == ord('w'):
-                change_to = 'UP'
-            if event.key == pygame.K_DOWN or event.key == ord('s'):
-                change_to = 'DOWN'
-            if event.key == pygame.K_LEFT or event.key == ord('a'):
-                change_to = 'LEFT'
-            if event.key == pygame.K_RIGHT or event.key == ord('d'):
-                change_to = 'RIGHT'
-            # Esc -> Create event to quit the game
+            set_direction_from_key(event.key)
             if event.key == pygame.K_ESCAPE:
                 pygame.event.post(pygame.event.Event(pygame.QUIT))
 
@@ -273,10 +279,10 @@ def move_snake():
     if direction == 'RIGHT':
         snake_pos[0] += 10
 
+# --- Snake Body Growing Mechanism ---
 def grow_snake_and_check_food():
     """Grow the snake if food is eaten, play sound, and spawn new food if needed."""
     global score, food_spawn, food_pos
-    # --- Snake Body Growing Mechanism ---
     snake_body.insert(0, list(snake_pos))
     if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
         score += 1
@@ -291,9 +297,9 @@ def grow_snake_and_check_food():
         food_pos = [random.randrange(1, (frame_size_x//10)) * 10, random.randrange(1, (frame_size_y//10)) * 10]
     food_spawn = True
 
+ # --- GFX ---
 def draw_elements():
     """Draw the snake, food, and update the display."""
-    # --- GFX ---
     game_window.fill(black)
     for pos in snake_body:
         # Snake body
@@ -306,9 +312,9 @@ def draw_elements():
     # Refresh game screen
     pygame.display.update()
 
+# --- Game Over Conditions ---
 def check_game_over():
     """Check for collisions with walls or self."""
-    # --- Game Over Conditions ---
     # Getting out of bounds
     if snake_pos[0] < 0 or snake_pos[0] > frame_size_x-10:
         game_over()
@@ -318,7 +324,8 @@ def check_game_over():
     for block in snake_body[1:]:
         if snake_pos[0] == block[0] and snake_pos[1] == block[1]:
             game_over()
-
+            
+# --- Main Game Loop ---
 def main_game_loop():
     """Main game loop, calling helper functions each frame."""
     while True:
