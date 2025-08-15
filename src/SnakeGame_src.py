@@ -154,7 +154,8 @@ score = 0
 high_score = 0  # Track high score for the session
 
 # --- Game Over ---
-# This module was modified to include a replay button, and modified end screen text
+# This module was modified to include a replay button, display session high score,
+# and modified end screen text
 def game_over():
     global score, high_score
     if score > high_score:
