@@ -151,11 +151,14 @@ direction = 'RIGHT'
 change_to = direction
 
 score = 0
-
+high_score = 0  # Track high score for the session
 
 # --- Game Over ---
 # This module was modified to include a replay button, and modified end screen text
 def game_over():
+    global score, high_score
+    if score > high_score:
+        high_score = score  # Update high score if needed
     """
     Display the end game screen and handle replay or exit.
     Shows the 'BETTER LUCK NEXT TIME' message and a replay button.
@@ -186,11 +189,12 @@ def game_over():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if replay_rect.inflate(40, 20).collidepoint(event.pos):
                     restart_game()
-                    return
+                    return 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
+                    
 def restart_game():
     global snake_pos, snake_body, food_pos, food_spawn, direction, change_to, score
     snake_pos = [100, 50]
@@ -212,14 +216,14 @@ def show_score(choice, color, font, size):
         size (int): Font size for the score text.
     """
     score_font = pygame.font.SysFont(font, size)
-    score_surface = score_font.render('Score : ' + str(score), True, color)
+    score_text = f"Score : {score}  |  High Score : {high_score}"  # Partition with vertical bar
+    score_surface = score_font.render(score_text, True, color)
     score_rect = score_surface.get_rect()
     if choice == 1:
-        score_rect.midtop = (frame_size_x/10, 15)
+        score_rect.midtop = (frame_size_x // 2, 15)  # Centered at top
     else:
-        score_rect.midtop = (frame_size_x/2, frame_size_y/1.25)
+        score_rect.midtop = (frame_size_x // 2, frame_size_y / 1.25)
     game_window.blit(score_surface, score_rect)
-    # pygame.display.flip()
 
 
 
@@ -324,6 +328,12 @@ def check_game_over():
     for block in snake_body[1:]:
         if snake_pos[0] == block[0] and snake_pos[1] == block[1]:
             game_over()
+
+    show_score(1, white, 'consolas', 20)
+    # Refresh game screen
+    pygame.display.update()
+    # Refresh rate
+    fps_controller.tick(difficulty)
             
 # --- Main Game Loop ---
 def main_game_loop():
