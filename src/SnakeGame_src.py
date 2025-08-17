@@ -13,16 +13,23 @@ If the sound files are missing or cannot be loaded, disables sound effects witho
 """
 # This section adds and sets up sound effects for the game. 
 sound_path = os.path.join(os.path.dirname(__file__), 'bite.wav')
-if not os.path.isfile(sound_path):
-    eat_sound = None
-    print(f"[!] Required sound file 'bite.wav' not found at {sound_path}. Sound effects will be disabled.")
-else:
-    try:
-        pygame.mixer.init()
+crash_sound_path = os.path.join(os.path.dirname(__file__), 'wall-crash.wav')
+eat_sound = None
+crash_sound = None
+try:
+    pygame.mixer.init()
+    if os.path.isfile(sound_path):
         eat_sound = pygame.mixer.Sound(sound_path)
-    except Exception as e:
-        eat_sound = None
-        print(f"[!] Could not load sound: {e}")
+    else:
+        print(f"[!] Required sound file 'bite.wav' not found at {sound_path}. Sound effects will be disabled.")
+    if os.path.isfile(crash_sound_path):
+        crash_sound = pygame.mixer.Sound(crash_sound_path)
+    else:
+        print(f"[!] Required sound file 'wall-crash.wav' not found at {crash_sound_path}. Crash sound will be disabled.")
+except Exception as e:
+    print(f"[!] Could not load sound: {e}")
+    eat_sound = None
+    crash_sound = None
 
 
 
@@ -322,9 +329,9 @@ def check_game_over():
     """Check for collisions with walls or self."""
     # Getting out of bounds
     if snake_pos[0] < 0 or snake_pos[0] > frame_size_x-10:
-        game_over()
+        game_over(play_crash_sound=True)
     if snake_pos[1] < 0 or snake_pos[1] > frame_size_y-10:
-        game_over()
+        game_over(play_crash_sound=True)
     # Touching the snake body
     for block in snake_body[1:]:
         if snake_pos[0] == block[0] and snake_pos[1] == block[1]:
