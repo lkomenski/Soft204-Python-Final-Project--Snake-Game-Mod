@@ -11,9 +11,11 @@ Initializes sound effects for eating food.
 Attempts to load 'bite.wav' from the script directory.
 If the sound files are missing or cannot be loaded, disables sound effects without errors.
 """
-# This section adds and sets up sound effects for the game. 
-sound_path = os.path.join(os.path.dirname(__file__), 'bite.wav')
-crash_sound_path = os.path.join(os.path.dirname(__file__), 'wall-crash.wav')
+# Change #1: Two new sound effects added, for eating and crashing
+
+assets_dir = os.path.join(os.path.dirname(__file__), 'assets')
+sound_path = os.path.join(assets_dir, 'bite.wav')
+crash_sound_path = os.path.join(assets_dir, 'wall-crash.wav')
 eat_sound = None
 crash_sound = None
 try:
@@ -35,9 +37,12 @@ except Exception as e:
 
 
 # --- Window Size ---
-# Window size was enlarged from 480x720
+
+# Change #2: Window size was enlarged from 480x720
+
 frame_size_x = 1280
 frame_size_y = 720
+
 
 # --- Check for Errors Encountered ---
 """
@@ -54,7 +59,9 @@ if check_errors[1] > 0:
 else:
     print('[+] Game successfully initialised')
 
+
 # --- Initialise Game Window ---
+
 pygame.display.set_caption('Snake Eater')
 game_window = pygame.display.set_mode((frame_size_x, frame_size_y))
 
@@ -68,10 +75,54 @@ blue = pygame.Color(0, 0, 255)
 # --- FPS (frames per second) Controller ---
 fps_controller = pygame.time.Clock()
 
+
 # --- Splash Screen and Difficulty Selection in Window ---
-# This section was added and displays the splash screen and allows the player to 
-# select the game difficulty by navigating through the options with the arrow keys 
-# and pressing ENTER to confirm. Previously, this was hardcoded into the game logic.
+
+# Change #3: Adds a splash screen with difficulty selection, instead of the
+# difficulty being hardcoded into the game
+
+def render_splash_screen(selected, difficulties, title_font, info_font, small_font):
+    game_window.fill(black)
+    title_surface = title_font.render('SNAKE EATER', True, green)
+    title_rect = title_surface.get_rect(center=(frame_size_x/2, frame_size_y/6))
+    game_window.blit(title_surface, title_rect)
+    info_surface = info_font.render('Select Difficulty:', True, white)
+    info_rect = info_surface.get_rect(center=(frame_size_x/2, frame_size_y/3))
+    game_window.blit(info_surface, info_rect)
+    for i, (label, _) in enumerate(difficulties):
+        color = blue if i == selected else white
+        diff_surface = small_font.render(f"{i+1} - {label}", True, color)
+        diff_rect = diff_surface.get_rect(center=(frame_size_x/2, frame_size_y/2 + i*35))
+        game_window.blit(diff_surface, diff_rect)
+    start_surface = small_font.render('Press ENTER to Start', True, green)
+    start_rect = start_surface.get_rect(center=(frame_size_x/2, frame_size_y - 60))
+    game_window.blit(start_surface, start_rect)
+    pygame.display.flip()
+
+def handle_splash_event(event, selected, difficulties):
+    if event.type == pygame.QUIT:
+        pygame.quit()
+        sys.exit()
+    if event.type != pygame.KEYDOWN:
+        return selected, False
+    if event.key == pygame.K_UP:
+        return (selected - 1) % len(difficulties), False
+    if event.key == pygame.K_DOWN:
+        return (selected + 1) % len(difficulties), False
+    if event.key == pygame.K_RETURN:
+        return selected, True
+    number_keys = [
+        (pygame.K_1, pygame.K_KP1),
+        (pygame.K_2, pygame.K_KP2),
+        (pygame.K_3, pygame.K_KP3),
+        (pygame.K_4, pygame.K_KP4),
+        (pygame.K_5, pygame.K_KP5),
+    ]
+    for idx, keys in enumerate(number_keys):
+        if idx < len(difficulties) and event.key in keys:
+            return idx, False
+    return selected, False
+
 def splash_screen_and_select_difficulty():
     """
     Display the splash screen and allow the user to select a difficulty level.
@@ -91,53 +142,10 @@ def splash_screen_and_select_difficulty():
         ("Impossible", 120)
     ]
     selected = 0
-
-    def render_screen(selected):
-        game_window.fill(black)
-        title_surface = title_font.render('SNAKE EATER', True, green)
-        title_rect = title_surface.get_rect(center=(frame_size_x/2, frame_size_y/6))
-        game_window.blit(title_surface, title_rect)
-        info_surface = info_font.render('Select Difficulty:', True, white)
-        info_rect = info_surface.get_rect(center=(frame_size_x/2, frame_size_y/3))
-        game_window.blit(info_surface, info_rect)
-        for i, (label, _) in enumerate(difficulties):
-            color = blue if i == selected else white
-            diff_surface = small_font.render(f"{i+1} - {label}", True, color)
-            diff_rect = diff_surface.get_rect(center=(frame_size_x/2, frame_size_y/2 + i*35))
-            game_window.blit(diff_surface, diff_rect)
-        start_surface = small_font.render('Press ENTER to Start', True, green)
-        start_rect = start_surface.get_rect(center=(frame_size_x/2, frame_size_y - 60))
-        game_window.blit(start_surface, start_rect)
-        pygame.display.flip()
-
-    def handle_event(event, selected):
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        if event.type != pygame.KEYDOWN:
-            return selected, False
-        if event.key == pygame.K_UP:
-            return (selected - 1) % len(difficulties), False
-        if event.key == pygame.K_DOWN:
-            return (selected + 1) % len(difficulties), False
-        if event.key == pygame.K_RETURN:
-            return selected, True
-        number_keys = [
-            (pygame.K_1, pygame.K_KP1),
-            (pygame.K_2, pygame.K_KP2),
-            (pygame.K_3, pygame.K_KP3),
-            (pygame.K_4, pygame.K_KP4),
-            (pygame.K_5, pygame.K_KP5),
-        ]
-        for idx, keys in enumerate(number_keys):
-            if idx < len(difficulties) and event.key in keys:
-                return idx, False
-        return selected, False
-
     while True:
-        render_screen(selected)
+        render_splash_screen(selected, difficulties, title_font, info_font, small_font)
         for event in pygame.event.get():
-            selected, start = handle_event(event, selected)
+            selected, start = handle_splash_event(event, selected, difficulties)
             if start:
                 return difficulties[selected][1]
 
@@ -148,6 +156,9 @@ difficulty = splash_screen_and_select_difficulty()
 
 
 # --- Game Variables ---
+
+# Change #4: Introduces a session high score as a variable
+
 snake_pos = [100, 50]
 snake_body = [[100, 50], [100-10, 50], [100-(2*10), 50]]
 
@@ -160,9 +171,13 @@ change_to = direction
 score = 0
 high_score = 0  # Track high score for the session
 
+
+
 # --- Game Over ---
-# This module was modified to include a replay button, display session high score,
-# and modified end screen text
+
+# Change #5: This module was modified to include a replay button, display session
+# high score, and modified end screen text
+
 def game_over():
     global score, high_score
     if score > high_score:
@@ -174,10 +189,10 @@ def game_over():
     """
     my_font = pygame.font.SysFont('times new roman', 90)
     button_font = pygame.font.SysFont('times new roman', 40)
-    game_over_surface = my_font.render('BETTER LUCK NEXT TIME', True, red)
+    game_over_surface = my_font.render('BETTER LUCK NEXT TIME', True, red) # Change text to be more encouraging
     game_over_rect = game_over_surface.get_rect()
     game_over_rect.midtop = (frame_size_x/2, frame_size_y/4)
-    replay_surface = button_font.render('Replay', True, black)
+    replay_surface = button_font.render('Replay', True, black) # Replay button add
     replay_rect = replay_surface.get_rect()
     replay_rect.center = (frame_size_x/2, frame_size_y/2)
     button_color = green
@@ -213,7 +228,12 @@ def restart_game():
     change_to = direction
     score = 0
     
+
 # --- Score ---
+
+# Change #6: Visually displays a scoring system that tracks the player's score 
+# and high scoredisplayed side-by-side in game window
+
 def show_score(choice, color, font, size):
     """
     Display the current score on the game window.
@@ -236,8 +256,10 @@ def show_score(choice, color, font, size):
 
 
 # --- Main Game Logic ---
-# This section was completely refactored to modularize each key game component.
+
+# Change #7: This section was completely refactored to modularize each key game component.
 # This makes the code more organized and easier to manage and edit.
+
 def handle_events():
     """Handle user input and quit events."""
     global change_to
@@ -291,7 +313,11 @@ def move_snake():
     if direction == 'RIGHT':
         snake_pos[0] += 10
 
+
 # --- Snake Body Growing Mechanism ---
+
+# Contains new sound effect #1
+
 def grow_snake_and_check_food():
     """Grow the snake if food is eaten, play sound, and spawn new food if needed."""
     global score, food_spawn, food_pos
@@ -299,9 +325,8 @@ def grow_snake_and_check_food():
     if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
         score += 1
         food_spawn = False
-        # Added sound effect (if available)
         if eat_sound:
-            eat_sound.play()
+            eat_sound.play() # Plays sound effect when snake eats food
     else:
         snake_body.pop()
     # --- Spawning Food on the Screen ---
@@ -324,12 +349,16 @@ def draw_elements():
     # Refresh game screen
     pygame.display.update()
 
+
 # --- Game Over Conditions ---
+
+# Contains new sound effect #2
+
 def check_game_over():
     """Check for collisions with walls or self."""
     # Getting out of bounds
     if snake_pos[0] < 0 or snake_pos[0] > frame_size_x-10:
-        game_over(play_crash_sound=True)
+        game_over(play_crash_sound=True) # Plays crash sound on wall hit
     if snake_pos[1] < 0 or snake_pos[1] > frame_size_y-10:
         game_over(play_crash_sound=True)
     # Touching the snake body
@@ -343,7 +372,12 @@ def check_game_over():
     # Refresh rate
     fps_controller.tick(difficulty)
             
+
 # --- Main Game Loop ---
+
+# This function demonstrates the effectiveness of the refactoring
+# making the actual game loop much simpler
+
 def main_game_loop():
     """Main game loop, calling helper functions each frame."""
     while True:
