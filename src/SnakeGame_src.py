@@ -13,7 +13,7 @@ If the sound files are missing or cannot be loaded, disables sound effects witho
 """
 # Change #1: Two new sound effects added, for eating and crashing
 
-assets_dir = os.path.join(os.path.dirname(__file__), 'assets')
+assets_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets')
 sound_path = os.path.join(assets_dir, 'bite.wav')
 crash_sound_path = os.path.join(assets_dir, 'wall-crash.wav')
 eat_sound = None
@@ -81,6 +81,7 @@ fps_controller = pygame.time.Clock()
 # Change #3: Adds a splash screen with difficulty selection, instead of the
 # difficulty being hardcoded into the game
 
+# Splash screen visual build
 def render_splash_screen(selected, difficulties, title_font, info_font, small_font):
     game_window.fill(black)
     title_surface = title_font.render('SNAKE EATER', True, green)
@@ -99,6 +100,7 @@ def render_splash_screen(selected, difficulties, title_font, info_font, small_fo
     game_window.blit(start_surface, start_rect)
     pygame.display.flip()
 
+# Splash screen event handling
 def handle_splash_event(event, selected, difficulties):
     if event.type == pygame.QUIT:
         pygame.quit()
@@ -177,16 +179,18 @@ high_score = 0  # Track high score for the session
 
 # Change #5: This module was modified to include a replay button, display session
 # high score, and modified end screen text
-
-def game_over():
-    global score, high_score
-    if score > high_score:
-        high_score = score  # Update high score if needed
-    """
+"""
     Display the end game screen and handle replay or exit.
     Shows the 'BETTER LUCK NEXT TIME' message and a replay button.
     Waits for user input to either replay the game or exit.
-    """
+"""
+def game_over(play_crash_sound=False):
+    global score, high_score
+    if score > high_score:
+        high_score = score  # Update high score if needed
+
+    if play_crash_sound and 'crash_sound' in globals() and crash_sound:
+        crash_sound.play() # Crash sound triggered with game end
     my_font = pygame.font.SysFont('times new roman', 90)
     button_font = pygame.font.SysFont('times new roman', 40)
     game_over_surface = my_font.render('BETTER LUCK NEXT TIME', True, red) # Change text to be more encouraging
@@ -205,6 +209,8 @@ def game_over():
         pygame.draw.rect(game_window, button_color, replay_rect.inflate(40, 20))
         game_window.blit(replay_surface, replay_rect)
         pygame.display.flip()
+
+        # Handle events for replay or exit
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -217,6 +223,9 @@ def game_over():
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
+                elif event.key == pygame.K_RETURN:
+                    restart_game()
+                    return
                     
 def restart_game():
     global snake_pos, snake_body, food_pos, food_spawn, direction, change_to, score
@@ -261,7 +270,7 @@ def show_score(choice, color, font, size):
 # This makes the code more organized and easier to manage and edit.
 
 def handle_events():
-    """Handle user input and quit events."""
+    """Handle user gameplay input and quit events."""
     global change_to
     # Handle all events in the queue
     def set_direction_from_key(key):
@@ -303,7 +312,6 @@ def update_direction():
 
 def move_snake():
     """Move the snake in the current direction."""
-    # Move the snake in the current direction
     if direction == 'UP':
         snake_pos[1] -= 10
     if direction == 'DOWN':
@@ -329,6 +337,7 @@ def grow_snake_and_check_food():
             eat_sound.play() # Plays sound effect when snake eats food
     else:
         snake_body.pop()
+
     # --- Spawning Food on the Screen ---
     if not food_spawn:
         food_pos = [random.randrange(1, (frame_size_x//10)) * 10, random.randrange(1, (frame_size_y//10)) * 10]
@@ -343,9 +352,11 @@ def draw_elements():
         # .draw.rect(play_surface, color, xy-coordinate)
         # xy-coordinate -> .Rect(x, y, size_x, size_y)
         pygame.draw.rect(game_window, green, pygame.Rect(pos[0], pos[1], 10, 10))
+
     # --- Snake Food ---
     pygame.draw.rect(game_window, white, pygame.Rect(food_pos[0], food_pos[1], 10, 10))
     show_score(1, white, 'consolas', 20)
+
     # Refresh game screen
     pygame.display.update()
 
