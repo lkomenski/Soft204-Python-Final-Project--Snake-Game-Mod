@@ -14,8 +14,10 @@ Play as a hungry snake, searching and gobbling up food as it appears. The more y
 ## Gameplay Requirements
 Gameplay requirements found [here.](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/blob/main/assets/requirements.txt)
 
+Required sound effect files can be found [here.](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/blob/main/assets)
+
 ## Workflow  
-A workflow was added to this repository to ensure pull requests do not break key game mechanics.
+A workflow was added to this repository to run tests to ensure pull requests do not break key game mechanics.
 Workflow outline can be found [here.](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/blob/main/.github/WORKFLOW_README.md)
 
 ## Contributors
