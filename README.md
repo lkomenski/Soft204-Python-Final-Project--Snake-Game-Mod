@@ -1,7 +1,7 @@
-## Soft204: Python Final Project: Snake Eater, Snake Smarter
+# Soft204 Python Final Project: Snake Eater, Snake Smarter
 Final group project for SOFT204 class at Bates Technical College. We have modified an existing open-source Snake PyGame, including visual and gameplay changes, as well as refactoring.
 
-Play as a knowledge hungry snake, searching and gobbling up food as it appears. The more you eat, the more you grow, and the more you grow, the bigger your smarts get! Keep your head up and watch out for walls you might smack into, and make sure to not run into yourself as you grow!
+Play as a knowledge-hungry snake, searching and gobbling up food as it appears. The more you eat, the more you grow, and the more you grow, the bigger your smarts get! Keep your head up and watch out for walls you might smack into, and make sure to not run into yourself as you grow!
 
 ## Changes Made to Original Script
 1. The window size was enlarged from 480x720 to 1280x720
@@ -15,19 +15,19 @@ Play as a knowledge hungry snake, searching and gobbling up food as it appears. 
 9. Title of the game changed
 10. Score is displayed as 'Smarts' instead of 'Score'
 
-## Gameplay Requirements
+### Gameplay Requirements
 Gameplay requirements found [here.](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/blob/main/assets/requirements.txt)
 
 Required sound effect files can be found [here.](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/blob/main/assets)
 
-## Workflow  
-A workflow was added to this repository to run tests to ensure pull requests do not break key game mechanics.
-Workflow outline can be found [here.](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/blob/main/.github/WORKFLOW_README.md)
-
-## Contributors
+### Contributors
 Game modified with collaborators Leena Komenski, Andrew Riley, and Olena Volkova.
 [Contributions found here](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/graphs/contributors)
 
-# Attribution
+### Workflow  
+A workflow was added to this repository to run tests to ensure pull requests do not break key game mechanics.
+Workflow outline can be found [here.](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/blob/main/.github/WORKFLOW_README.md)
+
+### Attribution
 Rajat Dipta Biswas is the creator of the original source code.
 [Original code](https://github.com/rajatdiptabiswas/snake-pygame/blob/master/Snake%20Game.py)
