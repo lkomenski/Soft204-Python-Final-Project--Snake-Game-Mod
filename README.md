@@ -25,7 +25,7 @@ pip3 install pygame
 
 ## Running the application
 
-Download the source code from the repository and run the main file from the src directory:
+Copy the repository and run the main file from the src directory:
 ```
 python src/SnakeGame_src.py
 ```
