@@ -302,7 +302,7 @@ def show_score(choice, color, font, size):
         size (int): Font size for the score text.
     """
     score_font = pygame.font.SysFont(font, size)
-    score_text = f"Smarts : {score}  |  High Score : {high_score}"  # Partition with vertical bar
+    score_text = f"Smarts : {score}  |  High Smarts : {high_score}"  # Partition with vertical bar
     score_surface = score_font.render(score_text, True, color)
     score_rect = score_surface.get_rect()
     if choice == 1:
