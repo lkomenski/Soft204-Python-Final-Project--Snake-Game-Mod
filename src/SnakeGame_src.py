@@ -105,7 +105,7 @@ def draw_hat(x, y):
 
 # --- Snake Color Cycle Index ---
 
-# Change #4: Added a color cycle for the snake
+# Change #4: Adds a color cycle for the snake
 
 color_cycle = [
     pygame.Color(0, 255, 0),     # green
@@ -289,7 +289,7 @@ def restart_game():
 
 # --- Score ---
 
-# Change #8: Visually displays a scoring system that tracks the player's score
+# Change #8: Visually displays a scoring system that tracks the player's score (smarts)
 # and high score displayed side-by-side in game window
 
 def show_score(choice, color, font, size):
