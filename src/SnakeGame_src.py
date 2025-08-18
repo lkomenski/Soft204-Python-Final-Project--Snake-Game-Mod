@@ -1,4 +1,4 @@
-# SOFT204 Final Project - Snake Eater
+# SOFT204 Final Project - Snake Eater, Snake Smarter
 # Code edited and modified by Leena Komenski, Andrew Riley, and Olena Volkova
 
 
@@ -62,7 +62,7 @@ else:
 
 # --- Initialise Game Window ---
 
-pygame.display.set_caption('Snake Eater')
+pygame.display.set_caption('Snake Eater, Snake Smarter') # Caption updated to match new title
 game_window = pygame.display.set_mode((frame_size_x, frame_size_y))
 
 # --- Colors (R, G, B) ---
@@ -72,19 +72,68 @@ red = pygame.Color(255, 0, 0)
 green = pygame.Color(0, 255, 0)
 blue = pygame.Color(0, 0, 255)
 
+
+# --- Floating Hats ---
+
+# Change #3: Snakes wear little floating hats when food is eaten
+
+hats = [] 
+def draw_hat(x, y):
+    hat_color = (135, 206, 235)    # sky blue
+    tassel_color = (255, 215, 0)   # gold
+
+    # Top of the cap
+    top = (x + 20, y - 15)
+    right = (x + 40, y)
+    bottom = (x + 20, y + 15)
+    left = (x, y)
+
+    pygame.draw.polygon(game_window, hat_color, [top, right, bottom, left])
+
+    # Headband (base)
+    pygame.draw.rect(game_window, hat_color, pygame.Rect(x + 10, y + 15, 20, 5))
+
+    # Tassel
+    tassel_top = (x + 20, y - 15)
+    tassel_knot = (x + 24, y - 5)
+    tassel_bottom = (x + 24, y + 5)
+
+    pygame.draw.line(game_window, tassel_color, tassel_top, tassel_knot, 2)
+    pygame.draw.line(game_window, tassel_color, tassel_knot, tassel_bottom, 2)
+    pygame.draw.circle(game_window, tassel_color, tassel_bottom, 3)
+
+
+# --- Snake Color Cycle Index ---
+
+# Change #4: Added a color cycle for the snake
+
+color_cycle = [
+    pygame.Color(0, 255, 0),     # green
+    pygame.Color(255, 255, 0),   # yellow
+    pygame.Color(0, 0, 255),     # blue
+    pygame.Color(128, 0, 128),   # purple
+    pygame.Color(139, 69, 19),   # brown
+    pygame.Color(255, 165, 0),   # orange
+    pygame.Color(255, 0, 0),     # red
+    pygame.Color(255, 255, 255), # white
+    pygame.Color(255, 105, 180), # pink
+    pygame.Color(0, 0, 139),     # dark blue
+    pygame.Color(144, 238, 144)  # light green
+]
+
 # --- FPS (frames per second) Controller ---
 fps_controller = pygame.time.Clock()
 
 
 # --- Splash Screen and Difficulty Selection in Window ---
 
-# Change #3: Adds a splash screen with difficulty selection, instead of the
-# difficulty being hardcoded into the game
+# Change #5: Adds a splash screen with difficulty selection, instead of the
+# difficulty being hardcoded into the game. Title of the game changed.
 
 # Splash screen visual build
 def render_splash_screen(selected, difficulties, title_font, info_font, small_font):
     game_window.fill(black)
-    title_surface = title_font.render('SNAKE EATER', True, green)
+    title_surface = title_font.render('SNAKE EATER, SNAKE SMARTER', True, green) # Game title changed
     title_rect = title_surface.get_rect(center=(frame_size_x/2, frame_size_y/6))
     game_window.blit(title_surface, title_rect)
     info_surface = info_font.render('Select Difficulty:', True, white)
@@ -159,7 +208,7 @@ difficulty = splash_screen_and_select_difficulty()
 
 # --- Game Variables ---
 
-# Change #4: Introduces a session high score as a variable
+# Change #6: Introduces a session high score and snake color cycle as a variable
 
 snake_pos = [100, 50]
 snake_body = [[100, 50], [100-10, 50], [100-(2*10), 50]]
@@ -173,11 +222,11 @@ change_to = direction
 score = 0
 high_score = 0  # Track high score for the session
 
-
+snake_color_index = 0 # Sets the initial color index for the snake
 
 # --- Game Over ---
 
-# Change #5: This module was modified to include a replay button, display session
+# Change #7: This module was modified to include a replay button, display session
 # high score, and modified end screen text
 """
     Display the end game screen and handle replay or exit.
@@ -196,7 +245,7 @@ def game_over(play_crash_sound=False):
     game_over_surface = my_font.render('BETTER LUCK NEXT TIME', True, red) # Change text to be more encouraging
     game_over_rect = game_over_surface.get_rect()
     game_over_rect.midtop = (frame_size_x/2, frame_size_y/4)
-    replay_surface = button_font.render('Replay', True, black) # Replay button add
+    replay_surface = button_font.render('Replay', True, black) # Replay button added
     replay_rect = replay_surface.get_rect()
     replay_rect.center = (frame_size_x/2, frame_size_y/2)
     button_color = green
@@ -228,7 +277,7 @@ def game_over(play_crash_sound=False):
                     return
                     
 def restart_game():
-    global snake_pos, snake_body, food_pos, food_spawn, direction, change_to, score
+    global snake_pos, snake_body, food_pos, food_spawn, direction, change_to, score, snake_color_index
     snake_pos = [100, 50]
     snake_body = [[100, 50], [100-10, 50], [100-(2*10), 50]]
     food_pos = [random.randrange(1, (frame_size_x//10)) * 10, random.randrange(1, (frame_size_y//10)) * 10]
@@ -236,16 +285,16 @@ def restart_game():
     direction = 'RIGHT'
     change_to = direction
     score = 0
-    
+    snake_color_index = 0 # Reset snake color index
 
 # --- Score ---
 
-# Change #6: Visually displays a scoring system that tracks the player's score 
-# and high scoredisplayed side-by-side in game window
+# Change #8: Visually displays a scoring system that tracks the player's score
+# and high score displayed side-by-side in game window
 
 def show_score(choice, color, font, size):
     """
-    Display the current score on the game window.
+    Display the current score as 'Smarts' on the game window.
     Args:
         choice (int): 1 to show score at the top left, 0 to show at the center bottom.
         color (pygame.Color): Color of the score text.
@@ -253,7 +302,7 @@ def show_score(choice, color, font, size):
         size (int): Font size for the score text.
     """
     score_font = pygame.font.SysFont(font, size)
-    score_text = f"Score : {score}  |  High Score : {high_score}"  # Partition with vertical bar
+    score_text = f"Smarts : {score}  |  High Score : {high_score}"  # Partition with vertical bar
     score_surface = score_font.render(score_text, True, color)
     score_rect = score_surface.get_rect()
     if choice == 1:
@@ -266,7 +315,7 @@ def show_score(choice, color, font, size):
 
 # --- Main Game Logic ---
 
-# Change #7: This section was completely refactored to modularize each key game component.
+# Change #9: This section was completely refactored to modularize each key game component.
 # This makes the code more organized and easier to manage and edit.
 
 def handle_events():
@@ -324,17 +373,22 @@ def move_snake():
 
 # --- Snake Body Growing Mechanism ---
 
-# Contains new sound effect #1
+# Contains new sound effect #1, color cycling, and floating hats
 
 def grow_snake_and_check_food():
-    """Grow the snake if food is eaten, play sound, and spawn new food if needed."""
-    global score, food_spawn, food_pos
+    """
+    Grow the snake if food is eaten, play sound, cycle the snake color, and spawn new food if needed.
+    Each time the snake eats food, the color cycles to the next in color_cycle.
+    """
+    global score, food_spawn, food_pos, snake_color_index
     snake_body.insert(0, list(snake_pos))
     if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
         score += 1
         food_spawn = False
         if eat_sound:
             eat_sound.play() # Plays sound effect when snake eats food
+        snake_color_index = (snake_color_index + 1) % len(color_cycle) # Cycle through snake colors
+        hats.append([food_pos[0], food_pos[1]]) # Add hat position when food is eaten
     else:
         snake_body.pop()
 
@@ -345,17 +399,29 @@ def grow_snake_and_check_food():
 
  # --- GFX ---
 def draw_elements():
-    """Draw the snake, food, and update the display."""
+    """
+    Draw the snake, food, floating hats, and update the display.
+    The snake body is drawn using the current color from color_cycle, which cycles on each food eaten.
+    Floating hats are drawn and animated above the game area when food is eaten.
+    """
     game_window.fill(black)
+
     for pos in snake_body:
         # Snake body
         # .draw.rect(play_surface, color, xy-coordinate)
         # xy-coordinate -> .Rect(x, y, size_x, size_y)
-        pygame.draw.rect(game_window, green, pygame.Rect(pos[0], pos[1], 10, 10))
+        pygame.draw.rect(game_window, color_cycle[snake_color_index], pygame.Rect(pos[0], pos[1], 10, 10))
 
     # --- Snake Food ---
     pygame.draw.rect(game_window, white, pygame.Rect(food_pos[0], food_pos[1], 10, 10))
     show_score(1, white, 'consolas', 20)
+
+    # Draw and animate hats
+    for hat in hats[:]:
+        hat[1] -= 2  # move up
+        draw_hat(hat[0], hat[1])
+        if hat[1] < -20:  # remove off-screen hats
+            hats.remove(hat)
 
     # Refresh game screen
     pygame.display.update()
