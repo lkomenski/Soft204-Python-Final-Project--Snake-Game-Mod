@@ -16,8 +16,8 @@ Play as a knowledge-hungry snake, searching and gobbling up food as it appears. 
 10. Score is displayed as 'Smarts' instead of 'Score'
 
 ## Installing
-Download the Python 3 installer package from the official website and install it (if not already installed)
-Run the following in the terminal to install the Pygame library
+Download and install the Python 3 installer package from the official website (if not already installed).
+Run the following in the terminal to install the Pygame library:
 ```
 pip3 install pygame
 ```
@@ -35,13 +35,13 @@ Gameplay requirements found [here.](https://github.com/lkomenski/Soft204-Python-
 
 Required sound effect files can be found [here.](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/blob/main/assets)
 
-### Workflow  
+## Workflow  
 A workflow was added to this repository to run tests to ensure pull requests do not break key game mechanics.
-Workflow outline can be found [here.](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/blob/main/.github/WORKFLOW_README.md)
+[Workflow outline](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/blob/main/.github/WORKFLOW_README.md)
 
 ## Contributors
 Game modified with collaborators Leena Komenski, Andrew Riley, and Olena Volkova.
-[Contributions found here](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/graphs/contributors)
+[Contributions](https://github.com/lkomenski/Soft204-Python-Final-Project--Snake-Game-Mod/graphs/contributors)
 
 ## Attribution
 Rajat Dipta Biswas is the creator of the original source code.
